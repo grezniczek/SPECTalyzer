@@ -8,30 +8,47 @@ namespace DICOMAnalyzer
         private readonly string _separator = "\t";
         public SliceData SliceData { get; private set; }
         public int[] Frequency;
-        public CalcMode Mode { get; private set; }
+        public CalcMode CalcMode { get; private set; }
+        public HistoMode HistoMode { get; private set; }
 
         private Histogram()
         {
             // Instantiate via static generator.
         }
 
-        public static Histogram Calculate(SliceData sd, CalcMode mode = CalcMode.BySum)
+        public static Histogram Calculate(SliceData sd, CalcMode calcMode = CalcMode.BySum, HistoMode histoMode = HistoMode.Normal)
         {
             var h = new Histogram
             {
                 SliceData = sd,
                 Frequency = new int[100],
-                Mode = mode,
+                CalcMode = calcMode,
+                HistoMode = histoMode,
             };
 
-            var data = mode == CalcMode.ByCount ? sd.DataByCount : sd.DataBySum;
-            var min = mode == CalcMode.ByCount ? sd.RollingCountMinValue : sd.RollingSumMinValue;
-            var max = mode == CalcMode.ByCount ? sd.RollingCountMaxValue : sd.RollingSumMaxValue;
-            double div = Math.Max(1.0, max - min);
-            foreach (var val in data)
+            var data = calcMode == CalcMode.ByCount ? sd.DataByCount : sd.DataBySum;
+
+            if (h.HistoMode == HistoMode.Normal)
             {
-                int idx = Math.Min(99, (int)Math.Floor((val - min) / div * 100.0));
-                h.Frequency[idx]++;
+                var min = calcMode == CalcMode.ByCount ? sd.RollingCountMinValue : sd.RollingSumMinValue;
+                var max = calcMode == CalcMode.ByCount ? sd.RollingCountMaxValue : sd.RollingSumMaxValue;
+                double div = Math.Max(1.0, max - min);
+                foreach (var val in data)
+                {
+                    int idx = Math.Min(99, (int)Math.Floor((val - min) / div * 100.0));
+                    h.Frequency[idx]++;
+                }
+            }
+            else
+            {
+                var min = calcMode == CalcMode.ByCount ? sd.RollingCountMinValue : sd.RollingSumMinValue;
+                var max = calcMode == CalcMode.ByCount ? sd.RollingCountMaxValue : sd.RollingSumMaxValue;
+                double div = Math.Max(10.0, max - min);
+                foreach (var val in data)
+                {
+                    int idx = Math.Min(99, (int)Math.Floor((Math.Log10(Math.Max(1, val - min)) / Math.Log10(div) * 100.0)));
+                    h.Frequency[idx]++;
+                }
             }
 
             return h;
@@ -47,19 +64,21 @@ namespace DICOMAnalyzer
                 {
                     "File",
                     "CalcMode",
+                    "HistoMode",
                     "Min",
                     "Max",
                 }),
                 string.Join(_separator, new string[]
                 {
                     $"{SliceData.RawData.SourceFileName}",
-                    $"{Mode}",
+                    $"{CalcMode}",
+                    $"{HistoMode}",
                     $"{SliceData.MinValue}",
                     $"{SliceData.MaxValue}",
                 }),
                 string.Join(_separator, new string[]
                 {
-                    "Signal (relative)",
+                    "Signal",
                     "Count",
                 }),
                 string.Join(Environment.NewLine, table));

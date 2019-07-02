@@ -13,7 +13,7 @@ namespace DICOMAnalyzer
             if (args.Length == 0 || lcArgs.Any(arg => arg == "/?" || arg == "help"))
             {
                 Console.WriteLine($"Usage: dotnet {Assembly.GetEntryAssembly().GetName().Name} commands DICOM.file");
-                Console.WriteLine("Valid commands are: PixelData SliceData Rolling TVEbySum TVEbyCount Histo");
+                Console.WriteLine("Valid commands are: PixelData SliceData Rolling TVEBySum TVEByCount HistoBySum HistoByCount HistoLogBySum HistoLogByCount");
                 Console.WriteLine("Call with --version to get version info");
                 return 0;
             }
@@ -76,9 +76,24 @@ namespace DICOMAnalyzer
             }
 
             // Calculate and output histogram data?
-            if (lcArgs.Any(arg => arg == "histo"))
+            if (lcArgs.Any(arg => arg == "histobysum"))
             {
-                var histo = Histogram.Calculate(sd);
+                var histo = Histogram.Calculate(sd, CalcMode.BySum, HistoMode.Normal);
+                Console.WriteLine(histo.Dump());
+            }
+            if (lcArgs.Any(arg => arg == "histobycount"))
+            {
+                var histo = Histogram.Calculate(sd, CalcMode.ByCount, HistoMode.Normal);
+                Console.WriteLine(histo.Dump());
+            }
+            if (lcArgs.Any(arg => arg == "histologbysum"))
+            {
+                var histo = Histogram.Calculate(sd, CalcMode.BySum, HistoMode.Log10);
+                Console.WriteLine(histo.Dump());
+            }
+            if (lcArgs.Any(arg => arg == "histologbycount"))
+            {
+                var histo = Histogram.Calculate(sd, CalcMode.ByCount, HistoMode.Log10);
                 Console.WriteLine(histo.Dump());
             }
 

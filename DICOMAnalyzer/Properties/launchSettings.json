@@ -2,7 +2,7 @@
   "profiles": {
     "DICOMAnalyzer": {
       "commandName": "Project",
-      "commandLineArgs": "TVEbySum \"D:\\GR-Docs\\Cloud\\Projekte\\Koop Le Pape (Frankreich)\\RATS\\Results\\Rat1 IP t0 250419.dcm\""
+      "commandLineArgs": "tvebysum \"D:\\GR-Docs\\Cloud\\Projekte\\Koop Le Pape (Frankreich)\\RATS\\Results\\Rat1 IP t0 250419.dcm\""
     }
   }
 }
