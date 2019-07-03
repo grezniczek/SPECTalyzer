@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "DICOMAnalyzer": {
+    "SPECTalyzer": {
       "commandName": "Project",
       "commandLineArgs": "tvebysum \"D:\\GR-Docs\\Cloud\\Projekte\\Koop Le Pape (Frankreich)\\RATS\\Results\\Rat1 IP t0 250419.dcm\""
     }

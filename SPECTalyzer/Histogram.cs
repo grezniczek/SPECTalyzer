@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace DICOMAnalyzer
+namespace SPECTalyzer
 {
     class Histogram
     {

@@ -1,4 +1,4 @@
-﻿namespace DICOMAnalyzer
+﻿namespace SPECTalyzer
 {
     enum HistoMode
     {
